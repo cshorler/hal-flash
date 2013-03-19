@@ -1,0 +1,14 @@
+This is the libhal-flash package.
+
+It is based upon hal-0.5.14 package
+
+WARNING - this is not a fully functional HAL layer!
+
+The Adobe Flash web browser plugin for Linux relies upon libhal to provide
+information required by libadobecp (which libflashplayer.so retrieves from the
+internet) for playing back drm content.
+
+Since HAL is no longer centric to most modern Linux systems (now we have UDev,
+UDisks etc) - I'm only really providing this library because I see a growing
+trend in the UK: ITV, Lovefilm and others are now using Silverlight rather than
+Flash for their drm streams.

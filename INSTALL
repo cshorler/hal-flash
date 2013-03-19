@@ -1,0 +1,19 @@
+Build Instructions:
+
+1. Install this package
+   ./configure --prefix=...
+   make
+   make install DESTDIR=...
+   
+Packaging:
+1. Ensure the HAL package (daemon, library etc) is not installed and ideally
+   conflicts with this package.
+2. The flash package could recommend this package for drm content.
+
+Development
+
+0. I'm using git
+1. I will attempt to build packages for all major Linux Distros using the SUSE
+   Build Service.
+2. I would welcome help / patches / merge requests!
+3. Initially you'll need to run autoreconf -i before building.
