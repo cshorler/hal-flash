@@ -14,24 +14,25 @@
 
 # norootforbuild
 
-Name:           hal-flash
+Name:           libhal1
 Summary:        HAL library for Flash plugin
 %define         dbus_version 0.61
 %define         dbus_release 1
 %define         hal_info_version 20091130
 Version:        0.1
-Release:        21
+Release:        1
 Url:            https://github.com/cshorler/hal-flash
-License:        GPLv2+ ; AFL2.0 or GPLv2.0
+License:        GPL-2.0+
 Group:          System/Daemons
 AutoReqProv:    on
-BuildRequires:  fdupes pkg-config
+BuildRequires:  fdupes pkg-config libtool
 BuildRequires:  dbus-1-glib-devel glib2-devel
 #
 Requires:       dbus-1 >= %{dbus_version}-%{dbus_release}
 Requires:       dbus-1-glib >= %{dbus_version}-%{dbus_release}
 Requires:       udisks
 #
+Provides:       libhal-flash
 # Sources:
 Source0:        hal-flash-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
