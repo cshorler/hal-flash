@@ -1,5 +1,5 @@
 #
-# spec file for package hal
+# spec file for package libhal1
 #
 # Copyright (c) 2011 SUSE LINUX Products GmbH, Nuernberg, Germany.
 #
@@ -22,7 +22,7 @@ Summary:        HAL library for Flash plugin
 Version:        0.1
 Release:        1
 Url:            https://github.com/cshorler/hal-flash
-License:        GPL-2.0+
+License:        GPL-2.0 or AFL-2.1
 Group:          System/Daemons
 AutoReqProv:    on
 BuildRequires:  fdupes pkg-config libtool
@@ -32,7 +32,9 @@ Requires:       dbus-1 >= %{dbus_version}-%{dbus_release}
 Requires:       dbus-1-glib >= %{dbus_version}-%{dbus_release}
 Requires:       udisks
 #
-Provides:       libhal-flash
+Provides:       hal-flash
+#
+Conflicts:      hal
 # Sources:
 Source0:        hal-flash-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -43,10 +45,9 @@ HAL is a hardware abstraction layer.  HAL is no longer used on modern
 Linux systems - with the advent of tools such as UDev and UDisks the same and
 improved functionality is provided by other means.
 
-The Flash plugin has not been updated by Adobe to use the more modern tools for
-Linux.  The plugin uses these to playback drm content.  
+The flash plugin currently requires libhal for playback of drm content. 
 
-This library provides a compatibility layer for that purpose.
+This library provides a compatibility layer and minimal libhal implementation for that purpose.
 This library does NOT provide a full HAL interface or daemon.
 
 %prep
@@ -57,7 +58,6 @@ libtoolize -c
 autoreconf -i
 %configure \
 	--libexecdir=%{_prefix}/lib/hal				\
-	--with-os-type=suse 					\
 	--docdir=%{_datadir}/doc/packages/hal			\
 	--disable-static \
 	--with-pic
@@ -72,11 +72,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libhal.so
 %clean
 rm -rf %{buildroot}
 
-%post
-/sbin/ldconfig
+%post -p /sbin/ldconfig
 
-%postun
-/sbin/ldconfig
+%postun -p /sbin/ldconfig
 
 %files 
 %defattr(-, root, root)

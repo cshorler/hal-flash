@@ -18,7 +18,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([src/libhal.c])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Wno-extra-portability -Werror foreign])
 
 glib_module="glib-2.0 >= 2.10.0 gobject-2.0 > 2.10.0 dbus-glib-1 >= 0.61"
 dbus_module="dbus-1 >= 0.61"
@@ -37,7 +37,6 @@ AC_SUBST(LT_AGE)
 dnl Checks for programs.
 # We need a C compiler.
 AC_PROG_CC
-AM_PROG_AR
 
 LT_INIT
 
