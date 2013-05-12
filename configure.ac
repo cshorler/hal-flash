@@ -51,5 +51,6 @@ AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+                 src/Makefile
+                 test/Makefile])
 AC_OUTPUT
