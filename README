@@ -11,4 +11,15 @@ internet) for playing back drm content.
 Since HAL is no longer centric to most modern Linux systems (now we have UDev,
 UDisks etc) - I'm only really providing this library because I see a growing
 trend in the UK: ITV, Lovefilm and others are now using Silverlight rather than
-Flash for their drm streams.
+Flash for their drm streams.  Currently Silverlight DRM protected content isn't
+supported on Linux (I'd like to see this change - I have nothing against Silverlight.
+
+
+TESTING INSTALLATION
+
+Adobe provides a test web page for DRM content and a test video required to run the test.
+Enter this into your browser:
+http://drmtest2.adobe.com:8080/SVP/SampleVideoPlayer_FP.html
+Enter this into the form:
+http://drmtest2.adobe.com:8080/Content/anonymous.f4v
+Press play.

@@ -20,7 +20,6 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Wno-extra-portability -Werror foreign])
 
-glib_module="glib-2.0 >= 2.10.0 gobject-2.0 > 2.10.0 dbus-glib-1 >= 0.61"
 dbus_module="dbus-1 >= 0.61"
 
 # libtool versioning - this applies to libhal and libhal-storage
@@ -37,18 +36,14 @@ AC_SUBST(LT_AGE)
 dnl Checks for programs.
 # We need a C compiler.
 AC_PROG_CC
+AC_HEADER_ASSERT
 
 LT_INIT
 
 # D-Bus libs
-PKG_CHECK_MODULES(DBUS, [$dbus_module])
+PKG_CHECK_MODULES([DBUS], [$dbus_module])
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
-
-# glib libs
-PKG_CHECK_MODULES(GLIB, [$glib_module])
-AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile

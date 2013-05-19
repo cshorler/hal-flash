@@ -10,9 +10,9 @@
 #include <string.h>
 #include <strings.h>
 
-#include <glib.h>
-#include <dbus/dbus-glib.h>
-#include <dbus/dbus-glib-lowlevel.h>
+#include <assert.h>
+
+#include <dbus/dbus.h>
 
 /**
  * LIBHAL_CHECK_PARAM_VALID:
@@ -33,8 +33,7 @@
   } while(0)
 
 struct LibHalContext_s {
-  DBusGConnection *connection;           /**< D-BUS connection */
-  GMainContext *context;
+  DBusConnection *connection;           /**< D-BUS connection */
   dbus_bool_t is_initialized;           /**< Are we initialised */
   void *user_data;                      /**< User data */
 };
@@ -47,112 +46,198 @@ struct LibHalContext_s {
 #define DBUS_IFACE_UDISKS "org.freedesktop.UDisks"
 #define DBUS_IFACE_UDISKS_DEVICE "org.freedesktop.UDisks.Device"
 
-#define DBUS_TYPE_G_ARRAY_OF_OBJECT_PATH    (dbus_g_type_get_collection ("GPtrArray", DBUS_TYPE_G_OBJECT_PATH))
-
-static GValue
-get_udisks_property(LibHalContext *ctx, const char *device_path, const char *iface_name, const char *property_name)
+static DBusMessage*
+_get_udisks_property(LibHalContext *ctx, const char *device_path, const char *iface_name, const char *property_name)
 {
-    GError *error = NULL;
-    DBusGProxy* proxy;
-    GValue val = G_VALUE_INIT;
+    DBusConnection* conn = ctx->connection;
+    DBusMessage* msg;
+    DBusMessage* reply;
+
+    DBusError err;
+    dbus_error_init(&err);
     
-    proxy = dbus_g_proxy_new_for_name(ctx->connection,
-                                      DBUS_SERVICE_UDISKS,
-                                      device_path,
-                                      DBUS_INTERFACE_PROPERTIES);
+    msg = dbus_message_new_method_call(DBUS_SERVICE_UDISKS,
+                                       device_path,
+                                       DBUS_INTERFACE_PROPERTIES,
+                                       "Get");
     
-    if (!dbus_g_proxy_call(proxy, "Get", &error, G_TYPE_STRING, iface_name,
-        G_TYPE_STRING, property_name, G_TYPE_INVALID, G_TYPE_VALUE, &val, G_TYPE_INVALID))
-    {
-        fprintf(stderr, "Interface: %s\nError Getting Property: %s\n", iface_name, property_name);
+    if (!msg) {
+        fprintf(stderr, "Failed to allocate DBus messaga\n");
+        return NULL;
+    }
+    
+    if (!dbus_message_append_args(msg,
+                                  DBUS_TYPE_STRING, &iface_name, DBUS_TYPE_STRING, &property_name,
+                                  DBUS_TYPE_INVALID)) {
+        fprintf(stderr, "Failed to append arguments to DBus message\n");
+        return NULL;
     }
 
-    g_object_unref(proxy);
-    return val;
+    reply = dbus_connection_send_with_reply_and_block(conn, msg, -1, &err);
+    if (dbus_error_is_set(&err))
+    {
+        fprintf(stderr, "DBus Error: %s\n", err.message);
+        dbus_error_free(&err);
+        return NULL;
+    }
+
+    return reply;
 }
 
-static gboolean
+
+static void
+_extract_variant(DBusMessage* reply, int type, void* value_p)
+{
+    DBusMessageIter iter;
+    DBusMessageIter child_iter;
+    int variant_type;
+    
+    dbus_message_iter_init(reply, &iter);
+    if (dbus_message_iter_get_arg_type(&iter) == DBUS_TYPE_VARIANT) {
+        dbus_message_iter_recurse(&iter, &child_iter);  // variant iterator
+        variant_type = dbus_message_iter_get_arg_type(&child_iter);
+        if (variant_type == type) {
+            dbus_message_iter_get_basic(&child_iter, value_p);
+        } else {
+            fprintf(stderr, "DBus Error: unexpected variant type: %c\n", variant_type);
+        }
+    } else {
+        fprintf(stderr, "DBus Error: not a variant type\n");
+    }
+}
+
+static dbus_bool_t
 device_is_drive(LibHalContext *ctx, const char *device_path)
 {
-    GValue val = G_VALUE_INIT;
+    DBusMessage* reply;
+    dbus_bool_t is_drive;
+
+    reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceIsDrive");    
+
+    if (!reply)
+        return FALSE;
     
-    val = get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceIsDrive");    
-    return g_value_get_boolean(&val);
+    _extract_variant(reply, DBUS_TYPE_BOOLEAN, &is_drive);
+    return is_drive;
 }
+
 
 static char *
 device_storage_bus(LibHalContext *ctx, const char *device_path)
 {
-    GValue val;
-    gchar **cnx_path;
-    gchar *bus_start;
-    gchar *bus = NULL;
+    DBusMessage* reply;
+    char *interface_bus;
     
-    val = get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceFileByPath");    
-    cnx_path = (gchar** ) g_value_get_boxed(&val);
-    bus_start = rindex(cnx_path[0], '/');
-    bus = strtok(bus_start+1, "-");
+    reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE,
+                                 "DriveConnectionInterface");
 
-    return strdup(bus);
+    if (!reply)
+        return NULL;
+    
+    _extract_variant(reply, DBUS_TYPE_STRING, &interface_bus);
+    return strdup(interface_bus);
 }
 
-static gchar *
+
+static char *
 device_drive_serial(LibHalContext *ctx, const char *device_path)
 {
-    GValue val = G_VALUE_INIT;
+    DBusMessage* reply;
+    char* drive_serial;
     
-    val = get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DriveSerial");
-    return g_value_dup_string(&val);
+    reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DriveSerial");
+    
+    if (!reply)
+        return NULL;
+    
+    _extract_variant(reply, DBUS_TYPE_STRING, &drive_serial);    
+    return strdup(drive_serial);
 }
+
 
 static dbus_uint64_t
 device_size(LibHalContext *ctx, const char *device_path)
 {
-    GValue val = G_VALUE_INIT;
+    DBusMessage* reply;
+    dbus_uint64_t size;
     
-    val = get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceSize");
-    return g_value_get_uint64(&val);
+    reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceSize");
+
+    if (!reply)
+        return 0;
+    
+    _extract_variant(reply, DBUS_TYPE_UINT64, &size);
+    return size;
 }
 
 static char**
 find_hard_drives(LibHalContext *ctx, int *num_devices)
 {
-    guint count = 0;
-    GError *error = NULL;
-    GPtrArray *hdd_array; // NULL
-    DBusGProxy *proxy = NULL;
-    char** buffer;
-    gchar *device_path;
+    DBusConnection* conn = ctx->connection;
+    DBusError err;
+    DBusMessage* msg;
+    DBusMessage* reply;
+    char** object_paths;
+    char* device_path;
+    unsigned int object_paths_len;
+    char** hdd_object_paths;
+    unsigned int num_hdd = 0;
+    dbus_uint64_t hdd_path_mask = 0;
+    dbus_uint64_t tmp = 0;
     
-    buffer = (char **) malloc(sizeof(char *) * 8);
-
-    proxy = dbus_g_proxy_new_for_name(ctx->connection, DBUS_SERVICE_UDISKS,
-                                      DBUS_PATH_UDISKS, DBUS_IFACE_UDISKS);
+    dbus_error_init(&err);
     
-    if (!dbus_g_proxy_call(proxy, "EnumerateDevices", &error, G_TYPE_INVALID,
-                      DBUS_TYPE_G_ARRAY_OF_OBJECT_PATH, &hdd_array, G_TYPE_INVALID)) {
-        // error
+    msg = dbus_message_new_method_call(DBUS_SERVICE_UDISKS,
+                                       DBUS_PATH_UDISKS,
+                                       DBUS_IFACE_UDISKS,
+                                       "EnumerateDevices");
+    
+    if (!msg) {
+        fprintf(stderr, "DBus Error: Failed to allocate messaga\n");
+        return NULL;
     }
-  
-    buffer[0] = NULL;
-    for (guint i=0; hdd_array && i < hdd_array->len; i++) {
-        device_path = g_ptr_array_index(hdd_array, i);
+    
+    reply = dbus_connection_send_with_reply_and_block(conn, msg, -1, &err);
+    if (!reply)
+    {
+        fprintf(stderr, "DBus Error: %s\n", err.message);
+        dbus_error_free(&err);
+        return NULL;
+    }
+    
+    if (!dbus_message_get_args(reply, &err, DBUS_TYPE_ARRAY, DBUS_TYPE_OBJECT_PATH,
+                               &object_paths, &object_paths_len, DBUS_TYPE_INVALID)) {
+        fprintf(stderr, "DBus Error: %s", err.message);
+        dbus_error_free(&err);
+        return NULL;        
+    }
+    
+    assert(object_paths_len <= 64);
+    
+    for (unsigned int i=0; object_paths && i < object_paths_len; i++) {
+        device_path = object_paths[i];
         if (device_is_drive(ctx, device_path)) {
-            buffer[count] = strdup(device_path);
-            count++;
-        }
-
-        if ((count % 8) == 0 && count != 0) {
-            // TODO: realloc
+            hdd_path_mask |= (1<<i);
         }
     }
     
-    buffer[count] = NULL;
-    *num_devices = count;
-    g_ptr_array_free(hdd_array, TRUE);
-    g_object_unref(proxy);
-
-    return buffer;
+    tmp = hdd_path_mask;    
+    while ((tmp &= (tmp-1)) > 0)
+        num_hdd++;
+    
+    hdd_object_paths = (char**) malloc(sizeof(char*)*(num_hdd+1));
+    
+    for (unsigned int i=0, j=0; object_paths && i < object_paths_len; i++) {
+        if ((hdd_path_mask>>i) & 1) {
+            hdd_object_paths[j++] = strdup(object_paths[i]);
+        }
+    }
+    
+    hdd_object_paths[num_hdd+1] = NULL;
+    *num_devices = num_hdd;
+    
+    dbus_free_string_array(object_paths);
+    return hdd_object_paths;
 }
 
 /**
@@ -231,7 +316,6 @@ libhal_ctx_new (void)
     return NULL;
   }
 
-  ctx->context = g_main_context_get_thread_default();
   ctx->is_initialized = FALSE;
   ctx->connection = NULL;
 
@@ -250,19 +334,12 @@ libhal_ctx_new (void)
 dbus_bool_t
 libhal_ctx_set_dbus_connection (LibHalContext *ctx, DBusConnection *conn)
 {
-    GError *error = NULL;
     LIBHAL_CHECK_LIBHALCONTEXT(ctx, FALSE);
 
-    // this is essential as it also performs dbus-glib type initialisation
-    // the other option is to duplicate _dbus_g_value_types_init()
-    // and call it in main()
-    ctx->connection = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
+    ctx->connection = conn;
     
     if (ctx->connection == NULL || conn == NULL)
         return FALSE;
-
-    // in case there's a need to retrieve conn via dbus-glib
-    dbus_connection_setup_with_g_main(conn, NULL);
 
     return TRUE;
 }

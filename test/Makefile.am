@@ -1,6 +1,6 @@
-AM_CPPFLAGS = @DBUS_CFLAGS@ @GLIB_CFLAGS@
+AM_CPPFLAGS = @DBUS_CFLAGS@
 AM_CFLAGS = -std=gnu99 -I../src -g -O0
-AM_LDFLAGS = @DBUS_LIBS@ @GLIB_LIBS@
+AM_LDFLAGS = @DBUS_LIBS@
 LTVALGRIND = $(top_srcdir)/libtool --execute $(VALGRIND)
 
 TESTS = flash

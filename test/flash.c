@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include <dbus/dbus.h>
-#include <dbus/dbus-glib.h>
 
 #include "libhal.h"
 
@@ -48,9 +47,6 @@ main(int argc, char* argv[])
     char** processor_list;
     unsigned int i;
     int num_devices;
-
-    /* Initialize GType system */
-    g_type_init ();
 
     dbus_error_init(&derror);
     conn = dbus_bus_get(DBUS_BUS_SYSTEM, &derror);
