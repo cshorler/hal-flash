@@ -1,0 +1,25 @@
+DEBUGGING
+
+It's not greatly straight-forwards to debug a firefox plugin, so I've created a test program.
+
+1.  Run test/flash and report any messages (this is statically linked so you should be able to 
+    easily get a full backtrace running it under GDB. Also the messages should be on the terminal.
+    
+
+Debugging under Firefox:
+1.  Ensure the shared library installed (libhal.so.1) is under the libraries search path, or add
+    the relevant directory to LD_LIBRARY_PATH (or equivalent on other systems).
+    
+2.  You may need to create and add a gdb-index to for the libxul.so file to the debug library of 
+    libxul - this is described in the GDB info pages.
+    
+3.  When running Firefox the environment variable MOZ_DEBUG_CHILD_PROCESS needs to be set to 1.
+    $ MOZ_DEBUG_CHILD_PROCESS=1 firefox
+    
+4.  When Firefox starts, navigate to the Adobe test page and start the DRM playback.
+
+5.  As soon as the terminal prints a debug message giving the plugin-container process id, attach
+    to this process in GDB (optionally set a catch point on load of libhal i.e. catch load libhal.*)
+    
+6.  Continue execution, get a backtrace.
+
