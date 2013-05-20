@@ -29,7 +29,6 @@ ltmain.sh
 Makefile
 Makefile.in
 stamp-h1
-m4/
 missing
 .deps/
 .libs/
