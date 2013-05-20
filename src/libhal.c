@@ -233,7 +233,7 @@ find_hard_drives(LibHalContext *ctx, int *num_devices)
         }
     }
     
-    hdd_object_paths[num_hdd+1] = NULL;
+    hdd_object_paths[num_hdd] = NULL;
     *num_devices = num_hdd;
     
     dbus_free_string_array(object_paths);
