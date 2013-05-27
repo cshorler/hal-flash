@@ -1,0 +1,5 @@
+libhal1-flash (0.2.0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Christopher Horler <chorler@debian>  Sat, 25 May 2013 23:55:36 +0100
