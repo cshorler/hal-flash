@@ -1,6 +1,6 @@
 This is the libhal-flash package.
 
-It is based upon hal-0.5.14 package
+It is loosely based upon libhal.[ch] from the hal-0.5.14 package for the external interface presented by the shared library libhal.  Further information on HAL can be found here:  http://www.freedesktop.org/wiki/Software/hal
 
 WARNING - this is not a fully functional HAL layer!
 
@@ -12,7 +12,7 @@ Since HAL is no longer centric to most modern Linux systems (now we have UDev,
 UDisks etc) - I'm only really providing this library because I see a growing
 trend in the UK: ITV, Lovefilm and others are now using Silverlight rather than
 Flash for their drm streams.  Currently Silverlight DRM protected content isn't
-supported on Linux (I'd like to see this change - I have nothing against Silverlight.
+supported on Linux (I'd like to see this change - I have nothing against Silverlight).
 
 
 TESTING INSTALLATION
