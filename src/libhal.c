@@ -134,7 +134,7 @@ device_is_hdd(LibHalContext *ctx, const char *device_path)
 {
     DBusMessage* reply;
     dbus_bool_t is_drive;
-    dbus_bool_t is_optical;
+    dbus_bool_t is_internal;
 
     reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceIsDrive");    
     if (!reply)
@@ -142,13 +142,13 @@ device_is_hdd(LibHalContext *ctx, const char *device_path)
 
     _extract_variant(reply, DBUS_TYPE_BOOLEAN, &is_drive);
 
-    reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceIsOpticalDisc");
+    reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceIsSystemInternal");
     if (!reply)
         return FALSE;
     
-    _extract_variant(reply, DBUS_TYPE_BOOLEAN, &is_optical);
+    _extract_variant(reply, DBUS_TYPE_BOOLEAN, &is_internal);
 
-    return is_drive && !is_optical;;
+    return is_drive && is_internal;
 }
 
 
