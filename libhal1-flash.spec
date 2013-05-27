@@ -52,8 +52,7 @@ This library does NOT provide a full HAL interface or daemon.
 %setup -n hal-flash-%{version}
 
 %build
-libtoolize -c
-autoreconf -i
+autoreconf -i -f
 %configure \
 	--libexecdir=%{_prefix}/lib/hal				\
 	--docdir=%{_datadir}/doc/packages/hal			\
