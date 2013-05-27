@@ -1,7 +1,30 @@
 /*
- * Compile with:
- *   gcc -Wall -std=gnu99 `pkg-config --libs --cflags glib-2.0 dbus-glib-1` libhal-flash.c -o hal-flash
- */
+ * libhal.c : HAL compatibility library for Flash using UDisks
+ *
+ * Copyright (C) 2013 Chris Horler, <cshorler@googlemail.com>
+ *
+ * Contributors to the Original HAL code are stated below:
+ * Copyright (C) 2003 David Zeuthen, <david@fubar.dk>
+ * Copyright (C) 2006 Sjoerd Simons, <sjoerd@luon.net>
+ * Copyright (C) 2007 Codethink Ltd. Author Rob Taylor <rob.taylor@codethink.co.uk>
+ *
+ * Licensed under the GNU General Public Licence v2
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307	 USA
+ *
+ **************************************************************************/
 
 #include "libhal.h"
 
@@ -107,18 +130,25 @@ _extract_variant(DBusMessage* reply, int type, void* value_p)
 }
 
 static dbus_bool_t
-device_is_drive(LibHalContext *ctx, const char *device_path)
+device_is_hdd(LibHalContext *ctx, const char *device_path)
 {
     DBusMessage* reply;
     dbus_bool_t is_drive;
+    dbus_bool_t is_optical;
 
     reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceIsDrive");    
+    if (!reply)
+        return FALSE;
 
+    _extract_variant(reply, DBUS_TYPE_BOOLEAN, &is_drive);
+
+    reply = _get_udisks_property(ctx, device_path, DBUS_IFACE_UDISKS_DEVICE, "DeviceIsOpticalDisc");
     if (!reply)
         return FALSE;
     
-    _extract_variant(reply, DBUS_TYPE_BOOLEAN, &is_drive);
-    return is_drive;
+    _extract_variant(reply, DBUS_TYPE_BOOLEAN, &is_optical);
+
+    return is_drive && !is_optical;;
 }
 
 
@@ -216,14 +246,14 @@ find_hard_drives(LibHalContext *ctx, int *num_devices)
     
     for (unsigned int i=0; object_paths && i < object_paths_len; i++) {
         device_path = object_paths[i];
-        if (device_is_drive(ctx, device_path)) {
+        if (device_is_hdd(ctx, device_path)) {
             hdd_path_mask |= (1<<i);
         }
     }
     
     tmp = hdd_path_mask;    
-    while ((tmp &= (tmp-1)) > 0)
-        num_hdd++;
+    for (num_hdd=0; tmp; num_hdd++)
+        tmp &= tmp - 1;
     
     hdd_object_paths = (char**) malloc(sizeof(char*)*(num_hdd+1));
     
