@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <dbus/dbus.h>
 
@@ -33,6 +34,36 @@ print_property(LibHalContext *hal_ctx, const char *udi, const char *key) {
       fprintf (stderr, "Unexpected type %d='%c'\n", type, type);
       break;
   }
+}
+
+void
+test_free_string_array()
+{
+    unsigned int hdd_path_mask = 0;
+    unsigned int tmp = 0;
+    unsigned int num_hdd = 0;
+    char** hdd_object_paths;
+    
+    hdd_path_mask |= (1<<0);
+    hdd_path_mask |= (1<<3);
+    hdd_path_mask |= (1<<4);
+    
+    /* bug is here? */
+    tmp = hdd_path_mask;
+    while ((tmp &= (tmp-1)) > 0)
+        num_hdd++;
+    
+    hdd_object_paths = (char**) malloc(sizeof(char*)*(num_hdd+1));
+    
+    for (unsigned int i=0, j=0; i < 5; i++) {
+        if ((hdd_path_mask>>i) & 1) {
+            hdd_object_paths[j++] = strdup("test");
+        }
+    }
+    
+    hdd_object_paths[num_hdd] = NULL;
+
+    libhal_free_string_array(hdd_object_paths);
 }
 
 int
@@ -97,6 +128,8 @@ main(int argc, char* argv[])
         i++;
     }
     libhal_free_string_array(processor_list);
+    
+    test_free_string_array();
 
     exit(EXIT_SUCCESS);
 }
