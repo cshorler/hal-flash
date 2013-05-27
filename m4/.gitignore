@@ -1,0 +1,4 @@
+# this is the libtool files dir, autoreconf -i requires that it exists
+*
+!.gitignore
+
