@@ -19,7 +19,7 @@ Summary:        HAL library for Flash plugin
 %define         dbus_version 0.61
 %define         dbus_release 1
 %define         hal_info_version 20091130
-Version:        0.2.0test1
+Version:        0.2.0rc1
 Release:        1
 Url:            https://github.com/cshorler/hal-flash
 License:        GPL-2.0

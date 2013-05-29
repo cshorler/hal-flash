@@ -1,5 +1,5 @@
-libhal1-flash (0.2.0test1) unstable; urgency=low
+libhal1-flash (0.2.0rc1) unstable; urgency=low
 
   * Initial Release.
 
- -- Christopher Horler <chorler@debian>  Sat, 25 May 2013 23:55:36 +0100
+ -- Christopher Horler <chorler@debian>  Wed, 29 May 2013 20:38:36 +0100
