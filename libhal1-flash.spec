@@ -25,7 +25,7 @@ Url:            https://github.com/cshorler/hal-flash
 License:        GPL-2.0
 Group:          System/Daemons
 AutoReqProv:    on
-BuildRequires:  fdupes pkg-config libtool
+BuildRequires:  pkg-config libtool
 BuildRequires:  dbus-1-devel >= %{dbus_version}-%{dbus_release}
 #
 Requires:       dbus-1 >= %{dbus_version}-%{dbus_release}
@@ -66,7 +66,6 @@ CFLAGS="${RPM_OPT_FLAGS} -fstack-protector" make %{?_smp_mflags}
 make DESTDIR=$RPM_BUILD_ROOT install
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/libhal.so
-%fdupes %{buildroot}
 
 %clean
 rm -rf %{buildroot}
