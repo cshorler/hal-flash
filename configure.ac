@@ -20,6 +20,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Wno-extra-portability -Werror foreign])
 
+gio_module="gio-2.0 >= 2.30"
 dbus_module="dbus-1 >= 0.61"
 
 # libtool versioning - this applies to libhal and libhal-storage
@@ -44,6 +45,11 @@ LT_INIT([disable-static])
 PKG_CHECK_MODULES([DBUS], [$dbus_module])
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
+
+# GLib / GIO
+PKG_CHECK_MODULES([GIO], [$gio_module])
+AC_SUBST(GIO_CFLAGS)
+AC_SUBST(GIO_LIBS)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile
