@@ -30,6 +30,7 @@ Makefile
 Makefile.in
 stamp-h1
 missing
+test-driver
 .deps/
 .libs/
 
