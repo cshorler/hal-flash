@@ -11,15 +11,40 @@ Debugging under Firefox:
     the relevant directory to LD_LIBRARY_PATH (or equivalent on other systems).
     
 2.  You may need to create and add a gdb-index to for the libxul.so file to the debug library of 
-    libxul - this is described in the GDB info pages.
+    libxul - this is described fully in the GDB info pages, an example follows:
+    $ cd /path/to/hal-flash
+    $ mkdir debug
+    $ LD_LIBRARY_PATH=/usr/lib64/firefox:${LD_LIBRARY_PATH} gdb /usr/lib64/firefox/plugin-container
+    (gdb) break main
+    ~~~messages~~~
+    (gdb) run
+    (gdb) save gdb-index ./debug
+    (gdb) c
+    (gdb) quit
+    $ sudo objcopy --add-section .gdb_index=./debug/libxul.so.debug.gdb-index --set-section-flags \
+        .gdb_index=readonly /usr/lib/debug/usr/lib64/firefox/libxul.so.debug \
+        /usr/lib/debug/usr/lib64/firefox/libxul.so.debug
+    
+    NOTE: The above objcopy command requires that you have debug packages installed, and will write
+    an extra section into the debug object file, if you want to maintain the original - make a backup)
     
 3.  When running Firefox the environment variable MOZ_DEBUG_CHILD_PROCESS needs to be set to 1.
     $ MOZ_DEBUG_CHILD_PROCESS=1 firefox
+    In Firefox's about:config you can also increase the plugin timeout if necessary
     
 4.  When Firefox starts, navigate to the Adobe test page and start the DRM playback.
 
 5.  As soon as the terminal prints a debug message giving the plugin-container process id, attach
-    to this process in GDB (optionally set a catch point on load of libhal i.e. catch load libhal.*)
-    
-6.  Continue execution, get a backtrace.
-
+    to this process in GDB, e.g.
+    $ gdb
+    (gdb) attach <pid>
+    (gdb) catch load libhal.*
+    ~~~messages~~~
+    ~~~catch break triggered~~~
+    (gdb) rbreak libhal_.*
+    (gdb) info break
+    (gdb) del <catch break id, e.g. del 1>
+    (gdb) del <the @plt points e.g. del 15-24>
+    (gdb) c
+    when a break point is triggered check arguments and local variables and make a record
+    (or simply pastebin your GDB session)
