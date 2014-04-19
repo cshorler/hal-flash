@@ -48,9 +48,8 @@ struct LibHalContext_s {
 
 static char*
 get_connection_bus(GDBusObjectManager *obj_manager, const char* hdd_object_path) {
-    GDBusProxy *hdd_interface = NULL;
+    GDBusProxy *hdd_interface;
     GDBusProxy *ata_interface = NULL;
-    GError *error = NULL;
     GVariant* property = NULL;
     const char* vdata_p = NULL;
     gchar* bus = NULL;
@@ -69,12 +68,14 @@ get_connection_bus(GDBusObjectManager *obj_manager, const char* hdd_object_path)
         is_ata = TRUE;
     
     property = g_dbus_proxy_get_cached_property(hdd_interface, "ConnectionBus");
-    vdata_p = g_variant_get_string(property, NULL);
+    if (property == NULL)
+        goto out;
     
-    if (g_strcmp0(vdata_p, "") == 0 && is_ata)
+    bus = g_variant_dup_string(property, NULL);
+    if (g_strcmp0(bus, "") == 0 && is_ata) {
+        g_free(bus);
         bus = g_strdup("ata");
-    else
-        bus = g_strdup(vdata_p);
+    }
     
 out:
     if (hdd_interface != NULL)
@@ -82,6 +83,9 @@ out:
     
     if (ata_interface != NULL)
         g_object_unref(ata_interface);
+    
+    if (property != NULL)
+        g_variant_unref(property);
     
     return g_strcmp0(bus,"") == 0 ? NULL : bus;
 }
@@ -101,18 +105,20 @@ find_hard_drives(GDBusObjectManager *obj_manager, guint* count) {
     object_list = g_dbus_object_manager_get_objects(obj_manager);
     for (l = object_list; l != NULL; l = l->next) {
         object = l->data;
-        drive_proxy = g_dbus_object_get_interface(object, DBUS_IFACE_UDISKS2_DRIVE);
-        if (drive_proxy == NULL)
-            continue;
         object_path = g_dbus_object_get_object_path(object);
-        g_ptr_array_add(object_path_list, g_strdup(object_path));
+        drive_proxy = g_dbus_object_get_interface(object, DBUS_IFACE_UDISKS2_DRIVE);
+        g_object_unref(object);
+        if (drive_proxy != NULL)
+            g_ptr_array_add(object_path_list, g_strdup(object_path));
     }
     
     *count = object_path_list->len;
     g_ptr_array_add(object_path_list, NULL);
-    
     hdd_list = (char** ) g_ptr_array_free(object_path_list, FALSE);
 
+    if (object_list != NULL)
+        g_list_free(object_list);
+    
     return hdd_list;
 }
 
@@ -121,16 +127,23 @@ get_drive_serial(GDBusObjectManager *mgr, const char *object_path)
 {
     GDBusProxy* drive_proxy = NULL;
     GVariant* property = NULL;
-    const char* drive_serial;
+    char* drive_serial;
     
     drive_proxy = (GDBusProxy* ) g_dbus_object_manager_get_interface(mgr, object_path, DBUS_IFACE_UDISKS2_DRIVE);
     if (drive_proxy == NULL)
-        return NULL;
+        goto out;
     
     property = g_dbus_proxy_get_cached_property(drive_proxy, "Serial");
-    drive_serial = g_variant_get_string(property, NULL);
+    drive_serial = g_variant_dup_string(property, NULL);
     
-    return g_strdup(drive_serial);
+out:
+    if (property != NULL)
+        g_variant_unref(property);
+    
+    if (drive_proxy != NULL)
+        g_object_unref(drive_proxy);
+    
+    return drive_serial;
 }
 
 static guint64
@@ -138,14 +151,21 @@ get_drive_size(GDBusObjectManager *mgr, const char *object_path)
 {
     GDBusProxy* drive_proxy = NULL;
     GVariant* property = NULL;
-    guint64 size;
+    guint64 size = 0L;
     
     drive_proxy = (GDBusProxy* ) g_dbus_object_manager_get_interface(mgr, object_path, DBUS_IFACE_UDISKS2_DRIVE);
     if (drive_proxy == NULL)
-        return 0L;
+        goto out;
     
     property = g_dbus_proxy_get_cached_property(drive_proxy, "Size");
     size = g_variant_get_uint64(property);
+    
+out:
+    if (property != NULL)
+        g_variant_unref(property);
+    
+    if (drive_proxy != NULL)
+        g_object_unref(drive_proxy);
     
     return size;
 }
@@ -156,6 +176,7 @@ char **
 libhal_manager_find_device_string_match(LibHalContext *ctx, const char *key, const char *value, int *num_devices,
                                         DBusError *error)
 {
+    gchar **default_r_val = {NULL,};
     char **hal_device_names;
 
     g_return_val_if_fail(ctx, NULL);
@@ -165,8 +186,7 @@ libhal_manager_find_device_string_match(LibHalContext *ctx, const char *key, con
     if (g_strcmp0(key, "storage.drive_type") == 0 && g_strcmp0(value, "disk") == 0) {
         hal_device_names = find_hard_drives(ctx->obj_manager, num_devices);
     } else {
-        hal_device_names = (char** ) g_malloc(sizeof(char*));
-        hal_device_names[0] = NULL;
+        hal_device_names = g_strdupv(default_r_val);
         *num_devices = 0;
     }
     
@@ -177,16 +197,7 @@ libhal_manager_find_device_string_match(LibHalContext *ctx, const char *key, con
 void
 libhal_free_string_array(char **str_array)
 {
-    int i;
-    
-    if (str_array) {
-        for (i = 0; str_array[i] != NULL; i++) {
-            g_free(str_array[i]);
-            str_array[i] = NULL;
-        }
-        g_free(str_array);
-        str_array = NULL;
-    }
+    g_strfreev(str_array);
 }
 
 
