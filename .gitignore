@@ -12,6 +12,9 @@
 *.so
 *.so.*
 
+# Test programs
+test/flash
+
 # Autotools stuff
 aclocal.m4
 ar-lib
