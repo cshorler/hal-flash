@@ -10,10 +10,8 @@ Packaging:
    conflicts with this package.
 2. The flash package could recommend this package for drm content.
 
-Development
+Development (only applies to a git cloned tree):
 
-0. I'm using git
-1. I will attempt to build packages for all major Linux Distros using the SUSE
-   Build Service.
-2. I would welcome help / patches / merge requests!
-3. Initially you'll need to run autoreconf -i before building.
+1. Prerequisites: autoconf, libtool, C compiler, ... (i.e. you need a standard development base system).
+2. autoreconf -i
+3. ./configure --prefix=...  (as above)
