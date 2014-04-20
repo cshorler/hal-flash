@@ -3,12 +3,7 @@
  *
  * Copyright (C) 2014 Chris Horler, <cshorler@googlemail.com>
  *
- * Contributors to the Original HAL code are stated below:
- * Copyright (C) 2003 David Zeuthen, <david@fubar.dk>
- * Copyright (C) 2006 Sjoerd Simons, <sjoerd@luon.net>
- * Copyright (C) 2007 Codethink Ltd. Author Rob Taylor <rob.taylor@codethink.co.uk>
- *
- * Licensed under the GNU General Public Licence v2
+ * Licensed under the Academic Free License version 2.1
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +12,20 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.         See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307         USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307	 USA
+ *
+ *
+ * Contributors to the Original HAL code are stated below for completeness
+ * (very little original code remains):
+ *
+ * Copyright (C) 2003 David Zeuthen, <david@fubar.dk>
+ * Copyright (C) 2006 Sjoerd Simons, <sjoerd@luon.net>
+ * Copyright (C) 2007 Codethink Ltd. Author Rob Taylor <rob.taylor@codethink.co.uk>
  *
  **************************************************************************/
 

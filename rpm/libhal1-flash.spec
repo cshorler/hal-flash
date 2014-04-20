@@ -22,7 +22,7 @@ Summary:        HAL library for Flash plugin
 Version:        0.2.0rc1
 Release:        1
 Url:            https://github.com/cshorler/hal-flash
-License:        GPL-2.0
+License:        GPL-2.0+ or AFL-2.1
 Group:          System/Daemons
 AutoReqProv:    on
 BuildRequires:  pkg-config libtool
