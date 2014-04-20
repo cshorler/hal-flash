@@ -1,17 +1,3 @@
-/*
- * libhal.c : HAL compatibility library for Flash using UDisks2
- *
- * Copyright (C) 2014 Chris Horler, <cshorler@googlemail.com>
- *
- * Licensed under the Academic Free License version 3.0
- *
- * Please refer to COPYING in the source code package for full license text.
- * 
- * The license is also available online:
- * http://opensource.org/licenses/AFL-3.0
- * 
- **************************************************************************/
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
