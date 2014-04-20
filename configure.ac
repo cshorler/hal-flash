@@ -8,7 +8,7 @@ dnl This program is distributed in the hope that it will be useful, but
 dnl WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 dnl implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-AC_INIT([HAL Flash], [0.2.0rc1], [cshorler@googlemail.com])
+AC_INIT([HAL Flash], [0.3.0], [cshorler@googlemail.com])
 
 # Minimum Autoconf version required.
 AC_PREREQ(2.60)
