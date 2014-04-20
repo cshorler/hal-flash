@@ -19,19 +19,17 @@ Summary:        HAL library for Flash plugin
 %define         dbus_version 0.61
 %define         dbus_release 1
 %define         hal_info_version 20091130
-Version:        0.3.0
+Version:        0.2.0rc1
 Release:        1
 Url:            https://github.com/cshorler/hal-flash
-License:        AFL-3.0
+License:        GPL-2.0
 Group:          System/Daemons
 AutoReqProv:    on
 BuildRequires:  pkg-config libtool
 BuildRequires:  dbus-1-devel >= %{dbus_version}-%{dbus_release}
-BuildRequires:  glib2-devel >= 2.30
 #
 Requires:       dbus-1 >= %{dbus_version}-%{dbus_release}
-Requires:       udisks2
-Requires:       libgio-2_0-0
+Requires:       udisks
 #
 Provides:       hal-flash
 #
