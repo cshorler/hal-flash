@@ -11,5 +11,5 @@ Homepage: https://github.com/cshorler/hal-flash
 Package: libhal1-flash
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, udisks (= 1.0.4)
+Depends: ${shlibs:Depends}, ${misc:Depends}, udisks2
 Description: Compatibility library to allow playback of Flash DRM content
