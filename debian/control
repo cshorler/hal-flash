@@ -1,7 +1,7 @@
 Source: libhal1-flash
 Priority: extra
 Maintainer: Christopher Horler <cshorler@googlemail.com>
-Build-Depends: debhelper (>= 8.0.0), dh-autoreconf, pkg-config, libdbus-1-dev
+Build-Depends: debhelper (>= 8.0.0), dh-autoreconf, pkg-config, libdbus-1-dev, libglib2.0-dev
 Standards-Version: 3.9.3
 Section: libs
 Homepage: https://github.com/cshorler/hal-flash
