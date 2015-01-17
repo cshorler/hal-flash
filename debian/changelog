@@ -1,3 +1,9 @@
+libhal1-flash (0.3.0) unstable; urgency=low
+
+  * Add glib-dev as a build dependency
+
+ -- Ryan Nowakowski <tubaman@fattuba.com>  Fri, 16 Jan 2015 17:52:23 -0600
+
 libhal1-flash (0.2.0rc1) unstable; urgency=low
 
   * Initial Release.
