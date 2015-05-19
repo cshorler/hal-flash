@@ -1,8 +1,8 @@
 Source: libhal1-flash
 Priority: extra
 Maintainer: Christopher Horler <cshorler@googlemail.com>
-Build-Depends: debhelper (>= 8.0.0), dh-autoreconf, pkg-config, libdbus-1-dev, libglib2.0-dev
-Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config, libdbus-1-dev, libglib2.0-dev
+Standards-Version: 3.9.6
 Section: libs
 Homepage: https://github.com/cshorler/hal-flash
 #Vcs-Git: git://git.debian.org/collab-maint/libhal1-flash.git
@@ -12,4 +12,5 @@ Package: libhal1-flash
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, udisks2
+Suggests: flashplugin-installer
 Description: Compatibility library to allow playback of Flash DRM content
