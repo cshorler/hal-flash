@@ -1,7 +1,7 @@
 #
 # spec file for package hal-flash
 #
-# Copyright (c) 2014 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -22,7 +22,7 @@ License:        GPL-2.0+ or AFL-2.1
 Group:          System/Daemons
 %define         dbus_version 0.61
 %define         dbus_release 1
-Version:        0.3.0
+Version:        0.3.1
 Release:        0
 Url:            https://github.com/cshorler/hal-flash
 BuildRequires:  dbus-1-devel >= %{dbus_version}-%{dbus_release}
@@ -33,12 +33,9 @@ BuildRequires:  pkg-config
 Requires:       dbus-1 >= %{dbus_version}-%{dbus_release}
 Requires:       udisks2
 #
-Provides:       hal-flash
 #
-Conflicts:      hal
 # Sources:
-Source0:        hal-flash_%{version}.tar.bz2
-Source1:        libhal1-flash-rpmlintrc
+Source0:        hal-flash-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 #
 
@@ -48,18 +45,20 @@ Linux systems - with the advent of tools such as UDev and UDisks the same and
 improved functionality is provided by other means.  This is a compatibility
 wrapper.
 
-%package -n libhal1-flash
+%package -n libhal1
 Summary:        Shared library for Flash hardware identification
 Group:          System/Daemons
+Provides:       hal-flash
+Conflicts:      hal
 
-%description -n libhal1-flash
+%description -n libhal1
 The Flash plugin currently requires libhal for playback of drm content. 
 
 This library provides a compatibility layer and minimal libhal implementation for that purpose.
 This library does NOT provide a full HAL interface or daemon.
 
 %prep
-%setup -n hal-flash_%{version}
+%setup -n hal-flash-%{version}
 
 %build
 autoreconf -i -f
@@ -78,11 +77,11 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libhal.so
 %clean
 rm -rf %{buildroot}
 
-%post -n libhal1-flash -p /sbin/ldconfig
+%post -n libhal1 -p /sbin/ldconfig
 
-%postun -n libhal1-flash -p /sbin/ldconfig
+%postun -n libhal1 -p /sbin/ldconfig
 
-%files -n libhal1-flash
+%files -n libhal1
 %defattr(-, root, root)
 %{_libdir}/*hal*.so.*
 
