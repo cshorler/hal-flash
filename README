@@ -14,6 +14,9 @@ trend in the UK: ITV, Lovefilm and others are now using Silverlight rather than
 Flash for their drm streams.  Currently Silverlight DRM protected content isn't
 supported on Linux (I'd like to see this change - I have nothing against Silverlight).
 
+RUNTIME REQUIREMENTS
+
+Note - This library requires UDisks2 and a running DBus service!
 
 TESTING INSTALLATION
 
@@ -23,3 +26,4 @@ http://drmtest2.adobe.com:8080/SVP/SampleVideoPlayer_FP.html
 Enter this into the form:
 http://drmtest2.adobe.com:8080/Content/anonymous.f4v
 Press play.
+
