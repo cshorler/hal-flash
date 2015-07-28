@@ -357,3 +357,9 @@ libhal_device_get_property_double (LibHalContext *ctx, const char *udi, const ch
     return -1.0f;
 }
 
+dbus_bool_t
+libhal_device_get_property_bool (LibHalContext *ctx, const char *udi, const char *key, DBusError *error)
+{
+    g_printerr("%s:%d: bool '%s' not handled\n", __FILE__, __LINE__, key);
+    return FALSE;
+}
