@@ -179,7 +179,7 @@ char **
 libhal_manager_find_device_string_match(LibHalContext *ctx, const char *key, const char *value, int *num_devices,
                                         DBusError *error)
 {
-    gchar **default_r_val = {NULL,};
+    gchar *default_r_val[] = {NULL,};
     char **hal_device_names;
 
     g_return_val_if_fail(ctx, NULL);
