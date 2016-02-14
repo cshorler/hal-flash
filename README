@@ -9,10 +9,8 @@ information required by libadobecp (which libflashplayer.so retrieves from the
 internet) for playing back drm content.
 
 Since HAL is no longer centric to most modern Linux systems (now we have UDev,
-UDisks etc) - I'm only really providing this library because I see a growing
-trend in the UK: ITV, Lovefilm and others are now using Silverlight rather than
-Flash for their drm streams.  Currently Silverlight DRM protected content isn't
-supported on Linux (I'd like to see this change - I have nothing against Silverlight).
+UDisks etc) - I'm only providing this library until such time as HTML5 becomes
+standard for online TV (many sites continue to use Flash).
 
 RUNTIME REQUIREMENTS
 
