@@ -16,24 +16,8 @@
 test/flash
 
 # Autotools stuff
-aclocal.m4
-ar-lib
-config.guess
 autom4te.cache/
-config.h
-config.log
-config.status
-config.sub
-configure
-depcomp
-install-sh
-libtool
-ltmain.sh
 Makefile
-Makefile.in
-stamp-h1
-missing
-test-driver
 .deps/
 .libs/
 
