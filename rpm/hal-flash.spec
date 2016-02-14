@@ -1,7 +1,7 @@
 #
 # spec file for package hal-flash
 #
-# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) 2016 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -20,17 +20,16 @@ Name:           hal-flash
 Summary:        HAL library for Flash plugin
 License:        GPL-2.0+ or AFL-2.1
 Group:          System/Daemons
-%define         dbus_version 0.61
-%define         dbus_release 1
 Version:        0.3.2
 Release:        0
 Url:            https://github.com/cshorler/hal-flash
-BuildRequires:  dbus-1-devel >= %{dbus_version}-%{dbus_release}
+BuildRequires:  dbus-1-devel
 BuildRequires:  glib2-devel
 BuildRequires:  libtool
 BuildRequires:  pkg-config
 #
-Requires:       dbus-1 >= %{dbus_version}-%{dbus_release}
+Requires:       glib2
+Requires:       libdbus-1-3
 Requires:       udisks2
 #
 #
@@ -61,12 +60,7 @@ This library does NOT provide a full HAL interface or daemon.
 %setup -n hal-flash-%{version}
 
 %build
-autoreconf -i -f
-%configure \
-	--libexecdir=%{_prefix}/lib/hal				\
-	--docdir=%{_datadir}/doc/packages/hal			\
-	--disable-static \
-	--with-pic
+%configure --disable-static --with-pic
 CFLAGS="${RPM_OPT_FLAGS} -fstack-protector" make %{?_smp_mflags}
 
 %install
@@ -84,5 +78,6 @@ rm -rf %{buildroot}
 %files -n libhal1
 %defattr(-, root, root)
 %{_libdir}/*hal*.so.*
+%doc README FAQ.txt COPYING
 
 %changelog
