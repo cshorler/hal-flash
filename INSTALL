@@ -1,10 +1,21 @@
 Build Instructions:
 
-1. Install this package
-   ./configure --prefix=...
-   make
-   make install DESTDIR=...
-   
+This assumes you downloaded and unpacked a release tarball as found here:
+https://github.com/cshorler/hal-flash/releases
+
+1. Generic instructions are applicable
+   $ ./configure --prefix=...
+   $ make
+   $ make install DESTDIR=...
+
+2. For system install the dynamic loader cache needs updating
+   # ldconfig
+
+3. For user install the search path for the loader can be set in the environment
+   i. For example in your ~/.profile
+   LD_LIBRARY_PATH=/install/lib/dir
+   export LD_LIBRARY_PATH
+
 Packaging:
 1. Ensure the HAL package (daemon, library etc) is not installed and ideally
    conflicts with this package.
@@ -13,5 +24,9 @@ Packaging:
 Development (only applies to a git cloned tree):
 
 1. Prerequisites: autoconf, libtool, C compiler, ... (i.e. you need a standard development base system).
-2. autoreconf -i
-3. ./configure --prefix=...  (as above)
+   $ autoreconf -i
+   $ ./configure --prefix=...  (as above)
+   $ make
+   $ make install DESTDIR=...
+   $ LD_LIBRARY_PATH=/path/to/dev/install /path/to/test_program
+
