@@ -1,0 +1,28 @@
+Here follows instructions that may resolve issues:
+
+1. Ensure that only hal-flash (and not hal) is installed
+   i. if hal is installed remove/delete it
+   ii. install hal-flash
+
+2. Clear browser cache
+   i. Open your browser(s) / applications which use the plugin and clear their caches
+   ii. Close browsers / applications using the plugin
+
+WARNING:
+If you have paid for content licences this step will DELETE those files
+
+3. Plugin cache data needs to be cleared at first installation
+   i. Open a shell
+      $ rm -rf ~/.macromedia
+      $ rm -rf ~/.adobe
+
+
+FOOTNOTES
+
+1. On first use it may be necessary to reload the webpage
+
+2. On first use it may be necessary to play the test video
+   (instructions in README)
+
+3. PepperFlash as used by Chromium / Chrome is not the same plugin and doesn't play encrypted flash content
+
