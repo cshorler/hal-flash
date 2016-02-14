@@ -20,7 +20,7 @@ Name:           hal-flash
 Summary:        HAL library for Flash plugin
 License:        GPL-2.0+ or AFL-2.1
 Group:          System/Daemons
-Version:        0.3.2
+Version:        0.3.3
 Release:        0
 Url:            https://github.com/cshorler/hal-flash
 BuildRequires:  dbus-1-devel
