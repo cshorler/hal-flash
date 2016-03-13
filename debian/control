@@ -9,7 +9,6 @@ Homepage: https://github.com/cshorler/hal-flash
 #Vcs-Browser: http://git.debian.org/?p=collab-maint/libhal1-flash.git;a=summary
 
 Package: libhal1-flash
-Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, udisks2
 Suggests: flashplugin-installer
