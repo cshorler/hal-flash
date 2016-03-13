@@ -14,3 +14,19 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, udisks2
 Suggests: flashplugin-installer
 Description: Compatibility library to allow playback of Flash DRM content
+ A libhal stub library forwarding to UDisks specifically to satisfy the
+ libflashplayer.so / libadobecp requirements.
+ .
+ It is loosely based upon libhal.[ch] from the hal-0.5.14 package
+ for the external interface presented by the shared library libhal.
+ Further information on HAL can be found here:
+ http://www.freedesktop.org/wiki/Software/hal
+ .
+ The Adobe Flash web browser plugin for Linux relies upon libhal to provide
+ information required by libadobecp (which libflashplayer.so retrieves
+ from the internet) for playing back drm content.
+ .
+ Since HAL is no longer centric to most modern Linux systems (now there
+ are succeeded product such as UDev, UDisks and so on).
+ This library provides thin wrapper until such time as HTML5 becomes
+ standard for online TV (many sites continue to use Flash).
