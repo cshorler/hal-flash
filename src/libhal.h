@@ -110,6 +110,12 @@ double libhal_device_get_property_double (LibHalContext *ctx,
 					  const char *key,
 					  DBusError *error);
 
+/* Get the value of a property of type bool. */
+dbus_bool_t libhal_device_get_property_bool (LibHalContext *ctx,
+					  const char *udi,
+					  const char *key,
+					  DBusError *error);
+
 /* Query a property type of a device. */
 LibHalPropertyType libhal_device_get_property_type (LibHalContext *ctx, 
 						    const char *udi,
