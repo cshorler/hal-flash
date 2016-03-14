@@ -1,4 +1,4 @@
-Source: libhal1-flash
+Source: hal-flash
 Priority: extra
 Maintainer: Christopher Horler <cshorler@googlemail.com>
 Build-Depends: debhelper (>= 9), dh-autoreconf, pkg-config, libdbus-1-dev, libglib2.0-dev
