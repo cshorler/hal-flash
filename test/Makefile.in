@@ -97,7 +97,7 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_flash_OBJECTS = flash.$(OBJEXT)
 flash_OBJECTS = $(am_flash_OBJECTS)
-flash_DEPENDENCIES = ../src/libhal.la
+flash_DEPENDENCIES = $(top_builddir)/src/libhal.la
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -495,12 +495,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = @DBUS_CFLAGS@
-AM_CFLAGS = -std=gnu99 -I../src
+AM_CFLAGS = -std=gnu99 -I$(top_srcdir)/src
 AM_LDFLAGS = @DBUS_LIBS@
 LTVALGRIND = $(top_srcdir)/libtool --execute $(VALGRIND)
 TESTS_ENVIRONMENT = FLASH="$(LTVALGRIND) flash"
 flash_SOURCES = flash.c
-flash_LDADD = ../src/libhal.la
+flash_LDADD = $(top_builddir)/src/libhal.la
 flash_LDFLAGS = -static
 all: all-am
 
